@@ -1,0 +1,7 @@
+environment:
+  kubeContext: "adasdsad"
+  secrets: []
+  values: []
+releases:
+  nginx:
+    wait: true

@@ -1,0 +1,30 @@
+helmDefaults:
+  timeout: 600
+
+repositories:
+  {{- (readFile "charts.yaml" | fromYaml).repositories | toYaml | nindent 2}}
+
+environments:
+  {{- range $entry := readDirEntries "environments" }}
+  {{- if $entry.IsDir }}
+  {{ $entry.Name }}:
+    {{- readFile (printf "environments/%s/cluster.yaml" $entry.Name) | fromYaml | get "environment" | toYaml | nindent 4 }}
+  {{- end }}
+  {{- end }}
+
+releases:
+  {{- $environmentConfig := (readFile (printf "environments/%s/cluster.yaml" $.Environment.Name) | fromYaml) }}
+  {{- range $release, $envConfig := $environmentConfig.releases }}
+  {{- $releaseConfig := index (readFile "charts.yaml" | fromYaml).releases $release }}
+  - name: {{ $release }}
+    {{- $releaseConfig | toYaml | nindent 4 }}
+    {{- $envConfig | toYaml | nindent 4 }}
+    {{- if (isFile (printf "environments/%s/values/%s.yaml" $.Environment.Name $release)) }}
+    values:
+      - environments/{{ $.Environment.Name }}/values/{{ $release }}.yaml
+    {{- end }}
+    {{- if (isFile (printf "environments/%s/secrets/%s.yaml" $.Environment.Name $release)) }}
+    secrets:
+      - environments/{{ $.Environment.Name }}/secrets/{{ $release }}.yaml
+    {{- end }}
+  {{- end }}
