@@ -1,0 +1,6 @@
+# helm
+helmfile.d/*
+helmfile.lock
+
+# sops
+*.yaml.dec
