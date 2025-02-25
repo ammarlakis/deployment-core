@@ -1,0 +1,9 @@
+environment:          # Used to set environment-wide configuration
+  kubeContext: eks-prod
+  secrets: []
+  values: []
+
+releases:             # Used to customize releases configuration per environment
+  nginx:
+    wait: true
+    version: 1.2.2
