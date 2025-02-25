@@ -6,3 +6,4 @@ environment:          # Used to set environment-wide configuration
 releases:             # Used to customize releases configuration per environment
   nginx:
     wait: true
+    version: 1.2.3
