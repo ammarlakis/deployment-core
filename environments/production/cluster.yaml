@@ -7,3 +7,4 @@ releases:             # Used to customize releases configuration per environment
   nginx:
     wait: true
     version: 1.2.2
+  prometheus:
