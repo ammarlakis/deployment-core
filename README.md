@@ -35,7 +35,7 @@ A release represents a Helm chart deployment that can be enabled per environment
 
 ### **Steps to Add a New Release:**
 
-1. \*\*Define the release in \*\***`charts.yaml`**
+1. **Define the release** in `charts.yaml`
    Add a new entry under the `releases` section in `charts.yaml`:
 
    ```yaml
@@ -46,7 +46,7 @@ A release represents a Helm chart deployment that can be enabled per environment
    ```
 
    - `namespace`: The Kubernetes namespace where the application should be deployed. This can be omitted and left to be environment specific.
-   - `chart`: The Helm chart repository and name.
+   - `chart`: The Helm chart repository and name. If the repository doesn't exist, it needs to be added first.
 
 2. **Enable the release for a specific environment**
    Edit `environments/<environment>/cluster.yaml` and add the release under `releases:`
@@ -58,7 +58,7 @@ A release represents a Helm chart deployment that can be enabled per environment
      my-app:
    ```
 
-   - The `values` list can contain environment-specific overrides.
+   - One can define additional per release configuration for environment-specific overrides. For example, adding hooks or dependencies on other releases. Refer to [helmfile documentation](https://helmfile.readthedocs.io/en/latest/#configuration) for release spec definition.
    - This enables the release only for this environment.
 
 3. **(Optional) Add custom values and secrets**
