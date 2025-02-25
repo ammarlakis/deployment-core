@@ -5,6 +5,7 @@ repositories:
   {{- (readFile "charts.yaml" | fromYaml).repositories | toYaml | nindent 2}}
 
 environments:
+  # Read cluster.yaml file from each environment folder
   {{- range $entry := readDirEntries "environments" }}
   {{- if $entry.IsDir }}
   {{ $entry.Name }}:
@@ -15,14 +16,25 @@ environments:
 releases:
   {{- $environmentConfig := (readFile (printf "environments/%s/cluster.yaml" $.Environment.Name) | fromYaml) }}
   {{- range $release, $envConfig := $environmentConfig.releases }}
-  {{- $releaseConfig := index (readFile "charts.yaml" | fromYaml).releases $release }}
+  {{- $releaseConfig := index (tpl (readFile "charts.yaml") $.Environment | fromYaml).releases $release }}
+
+  # Add release configuration
   - name: {{ $release }}
+    # Root-level configuration
     {{- $releaseConfig | toYaml | nindent 4 }}
-    {{- $envConfig | toYaml | nindent 4 }}
+
+    # Environment specific configuration
+    {{- with $envConfig }}
+    {{- . | toYaml | nindent 4 }}
+    {{- end }}
+
+    # Read values file
     {{- if (isFile (printf "environments/%s/values/%s.yaml" $.Environment.Name $release)) }}
     values:
-      - environments/{{ $.Environment.Name }}/values/{{ $release }}.yaml
+      - environments/{{ $.Environment.Name }}/values/{{ $release }}.yaml.gtpl
     {{- end }}
+
+    # Decrypt and read secrets file
     {{- if (isFile (printf "environments/%s/secrets/%s.yaml" $.Environment.Name $release)) }}
     secrets:
       - environments/{{ $.Environment.Name }}/secrets/{{ $release }}.yaml

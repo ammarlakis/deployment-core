@@ -1,7 +1,8 @@
-environment:
-  kubeContext: "adasdsad"
+environment:          # Used to set environment-wide configuration
+  kubeContext: eks-dev
   secrets: []
   values: []
-releases:
+
+releases:             # Used to customize releases configuration per environment
   nginx:
     wait: true
